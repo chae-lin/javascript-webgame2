@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>계산기</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      #result {
+        width: 180px;
+        height: 50px;
+        margin: 5px;
+        text-align: right;
+      }
+      #operator {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        text-align: center;
+      }
+      button {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <input readonly id="operator" />
+    <input readonly type="number" id="result" />
+    <div class="row">
+      <button class="num">7</button>
+      <button class="num">8</button>
+      <button class="num">9</button>
+      <button class="operator">+</button>
+    </div>
+    <div class="row">
+      <button class="num">4</button>
+      <button class="num">5</button>
+      <button class="num">6</button>
+      <button class="operator">-</button>
+    </div>
+    <div class="row">
+      <button class="num">1</button>
+      <button class="num">2</button>
+      <button class="num">3</button>
+      <button class="operator">/</button>
+    </div>
+    <div class="row">
+      <button id="clear">C</button>
+      <button class="num">0</button>
+      <button id="calculate">=</button>
+      <button class="operator">x</button>
+    </div>
+    <script>
+      let numOne = "";
+      let operator = "";
+      let numTwo = "";
+      const $operator = document.querySelector("#operator");
+      const $result = document.querySelector("#result");
+
+      const onClickNumber = (event) => {
+        if (!operator) {
+          // 연산식이 비어있다
+          numOne += event.target.textContent;
+          $result.value += event.target.textContent;
+          return;
+        }
+        if (!numTwo) {
+          // 연산식이 비어있지 않다
+          $result.value = "";
+        }
+        numTwo += event.target.textContent;
+        $result.value += event.target.textContent;
+      };
+      // 숫자 고차함수 버전.
+      // 고차함수를 사용하지 않으면 클릭하지 않았음에도 실행된 상태가 되어버린다.
+      // const onClickNumber = (num) => () => {
+      //   if(operator) {
+      //     numTwo += num;
+      //   } else {
+      //     numOne += num;
+      //   }
+      //   $result.value += num;
+      // }
+      const onClickOperator = (event) => {
+        if (numTwo) {
+          calculate();
+          numOne = $result.value;
+          numTwo = "";
+        }
+        if (numOne) {
+          operator = event.target.textContent;
+          $operator.value = operator;
+        } else if (event.target.textContent === "-") {
+          numOne += event.target.textContent;
+          $result.value += event.target.textContent;
+        } else {
+          alert("숫자를 먼저 입력하세요.");
+        }
+      };
+      const calculate = () => {
+        if (numTwo) {
+          switch (operator) {
+            case "+":
+              $result.value = parseInt(numOne) + parseInt(numTwo);
+              // parseInt(): 문자열 인자를 구문분석하여 특정 진수의 정수를 반환
+              break;
+            case "-":
+              $result.value = numOne - numTwo;
+              break;
+            case "x":
+              $result.value = numOne * numTwo;
+              break;
+            case "/":
+              $result.value = numOne / numTwo;
+              break;
+          }
+          numOne = $result.value;
+          operator = "";
+          numTwo = "";
+          $operator.value = "";
+        } else {
+          alert("숫자를 먼저 입력하세요.");
+        }
+      };
+
+      document.querySelectorAll(".num").forEach((target) => {
+        target.addEventListener("click", onClickNumber);
+      });
+      document.querySelectorAll(".operator").forEach((target) => {
+        target.addEventListener("click", onClickOperator);
+      });
+      document.querySelector("#calculate").addEventListener("click", calculate);
+      document.querySelector("#clear").addEventListener("click", () => {
+        numOne = "";
+        operator = "";
+        numTwo = "";
+        $operator.value = "";
+        $result.value = "";
+      });
+    </script>
+  </body>
+</html>
+
+<!--  
+  [if문 중첩 줄이기]
+  1. if문 다음에 나오는 공통된 절차를 각 분기점 내부에 넣는다
+  2. 분기점에서 짧은 절차부터 실행하게 if문을 작성한다.
+  3. 짧은 절차가 끝나면 return(함수 내부의 경우)이나 break(for문 내부의 경우)로 중단한다.
+  4. else를 제거한다. (이때 중첩 하나가 제거된다.)
+  5. 다음 중첩된 분기점이 나오면 1~4의 과정을 반복한다.
+-->
