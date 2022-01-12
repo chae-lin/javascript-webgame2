@@ -97,7 +97,21 @@
             }
           }
         }
-        
+
+        // 아웃만들기
+        if (strike === 0 && ball === 0) {
+          out += 1;
+          $out.textContent = `${value}: out 아웃`;
+        } else {
+          $logs.append(
+            `${value}: ${strike} 스트라이크 ${ball} 볼`,
+            document.createElement("br")
+          );
+        }
+        if (out === 3) {
+          $out.textContent = `3아웃으로 인해 종료! 정답은 ${answer.join("")}`;
+        }
+
         tries.push(value);
       });
     </script>
