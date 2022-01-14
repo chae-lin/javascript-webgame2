@@ -61,16 +61,25 @@
         } else if($screen.classList.contains("now")) {
           // 클릭 화면
           endTime = new Date();
-          // debugger; 개발자 도구에서 확인 가능하며 해당 코드에서 멈춰 있음.
           records.push(endTime - startTime);
           let average = (records.reduce((a, b) => (a + b), 0) / records.length);
           $result.textContent = `${endTime - startTime}ms 경과! 평균시간은 ${average}ms 입니다.`;
+          
+          // 상위 5개 보여주기
+          const topFive = records.sort((a, b) => a - b).slice(0, 5);
+          topFive.forEach((top, index) => {
+            $result .append(
+              document.createElement('br'),
+              `${index + 1}위: ${top}ms`,
+            )
+          })
+
+          // NOTE: 초기화 해주지 않아도 되지만 만일의 오류를 막기위해 초기화 해준다.
+          startTime = null;
+          endTime = null;
 
           $screen.classList.replace("now", "waiting");  
           $screen.textContent = "클릭해서 시작하세요"
-          // NOTE: 초기화 해주지 않아도 되지만 만일의 오류를 막기위해 초기화 해준다.
-          startTime = 0;
-          endTime = 0;
         }
       })
 
